@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sector Creativo · Comunicación Visual</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#000;
+  font-family:Arial,sans-serif;
+  padding:20px;
+  overflow-x:hidden;
+}
+.card{
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:20px;
+  padding:48px 40px 36px;
+  max-width:420px;
+  width:100%;
+  text-align:center;
+  transition:transform .3s ease,box-shadow .3s ease;
+}
+.card:hover{transform:translateY(-3px);box-shadow:0 0 30px rgba(255,68,68,.15)}
+.logo{
+  width:100px;
+  height:100px;
+  margin:0 auto 24px;
+  border-radius:50%;
+  overflow:hidden;
+  border:2px solid rgba(255,68,68,.3);
+  box-shadow:0 0 20px rgba(255,68,68,.15);
+  transition:box-shadow .3s;
+ }
+.logo:hover{box-shadow:0 0 30px rgba(255,68,68,.3)}
+.logo img{width:100%;height:100%;object-fit:cover}
+.name{
+  font-size:clamp(32px,7vw,48px);
+  font-weight:700;
+  line-height:1.1;
+  letter-spacing:-.04em;
+  background:linear-gradient(270deg,#ff4444,#ffcc00,#44ffcc,#ff44aa,#ff4444);
+  background-size:600% 600%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation:gradientAnim 10s ease infinite;
+  margin-bottom:4px;
+}
+.name span{display:block;font-size:clamp(18px,4vw,26px);letter-spacing:.1em;font-weight:400}
+@keyframes gradientAnim{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+.title{
+  font-size:12px;
+  color:#888;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  margin-bottom:20px;
+  font-weight:600;
+}
+.divider{
+  width:50px;height:2px;
+  background:#ff4444;
+  margin:0 auto 20px;
+  border-radius:1px;
+}
+.bio{
+  font-size:13px;
+  color:#aaa;
+  line-height:1.6;
+  margin-bottom:24px;
+}
+.contact{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.contact-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:10px;
+  text-decoration:none;color:#ccc;
+  font-size:13px;transition:all .2s;
+  text-align:left;
+}
+.contact-item:hover{
+  background:rgba(255,68,68,.1);
+  border-color:rgba(255,68,68,.3);
+  color:#fff;
+}
+.contact-item .icon{font-size:16px;width:22px;text-align:center;flex-shrink:0}
+.contact-item .label{color:#666;font-size:10px;text-transform:uppercase;letter-spacing:.8px}
+.contact-item .value{color:#ddd;font-size:13px}
+.contact-item:hover .value{color:#fff}
+.social{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+.social a{
+  width:42px;height:42px;
+  border-radius:8px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  display:flex;align-items:center;justify-content:center;
+  text-decoration:none;font-size:18px;
+  transition:all .25s;
+}
+.social a:hover{
+  background:rgba(255,68,68,.15);
+  border-color:rgba(255,68,68,.4);
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px rgba(255,68,68,.2);
+}
+.social a .tip{
+  display:none;
+  position:absolute;
+  bottom:-24px;
+  left:50%;transform:translateX(-50%);
+  background:#222;
+  color:#fff;
+  font-size:10px;
+  padding:2px 8px;
+  border-radius:4px;
+  white-space:nowrap;
+}
+.social a{position:relative}
+.social a:hover .tip{display:block}
+.whatsapp-float{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:12px 20px;
+  border-radius:10px;
+  background:rgba(255,68,68,.1);
+  border:1px solid rgba(255,68,68,.3);
+  text-decoration:none;
+  color:#ff4444;
+  font-size:14px;
+  font-weight:600;
+  transition:all .25s;
+  margin-bottom:20px;
+}
+.whatsapp-float:hover{
+  background:#ff4444;
+  color:#fff;
+}
+.footer{
+  font-size:11px;
+  color:#555;
+  line-height:1.6;
+  border-top:1px solid rgba(255,255,255,.05);
+  padding-top:16px;
+  margin-top:4px;
+}
+.footer a{color:#666;text-decoration:none}
+.footer a:hover{color:#ff4444}
+@media(max-width:480px){.card{padding:32px 18px 28px}}
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="logo">
+    <img src="logo-sector.jpg" alt="Sector Creativo">
+  </div>
+
+  <div class="name">
+    We are all
+    <span>Creative</span>
+  </div>
+
+  <div class="title">SERVICIOS DE COMUNICACIÓN VISUAL</div>
+  <div class="divider"></div>
+
+  <p class="bio">
+    Especialistas en comunicación visual de alta calidad, desde la conceptualización hasta la producción final. Fabricamos piezas a la medida de tus necesidades en Nuevo Laredo, Tamaulipas.
+  </p>
+
+  <div class="contact">
+    <a href="https://sectorcreativo.com.mx" target="_blank" class="contact-item">
+      <span class="icon">🌐</span>
+      <div><div class="label">Sitio web</div><div class="value">sectorcreativo.com.mx</div></div>
+    </a>
+    <a href="tel:+528672179046" class="contact-item">
+      <span class="icon">📞</span>
+      <div><div class="label">Cotizaciones</div><div class="value">867 217 9046</div></div>
+    </a>
+    <a href="tel:+528677194445" class="contact-item">
+      <span class="icon">📞</span>
+      <div><div class="label">Cotizaciones</div><div class="value">867 719 4445</div></div>
+    </a>
+    <a href="https://maps.app.goo.gl/WUXCeJtFhZ1yJd9FA" target="_blank" class="contact-item">
+      <span class="icon">📍</span>
+      <div><div class="label">Dirección</div><div class="value">Venustiano Carranza 2800, Col. Guerrero<br>88240 Nuevo Laredo, Tamps.</div></div>
+    </a>
+  </div>
+
+  <a href="https://wa.me/528672179046" target="_blank" class="whatsapp-float">
+    💬 Cotiza por WhatsApp
+  </a>
+
+  <div class="social">
+    <a href="https://www.facebook.com/screativomx/" target="_blank" aria-label="Facebook">
+      <span>f</span>
+      <span class="tip">Facebook</span>
+    </a>
+    <a href="https://www.instagram.com/screativomx/" target="_blank" aria-label="Instagram">
+      <span>◻</span>
+      <span class="tip">Instagram</span>
+    </a>
+    <a href="https://www.tiktok.com/@screativomx" target="_blank" aria-label="TikTok">
+      <span>♪</span>
+      <span class="tip">TikTok</span>
+    </a>
+    <a href="https://www.youtube.com" target="_blank" aria-label="YouTube">
+      <span>▶</span>
+      <span class="tip">YouTube</span>
+    </a>
+    <a href="https://wa.me/528672179046" target="_blank" aria-label="WhatsApp">
+      <span>💬</span>
+      <span class="tip">WhatsApp</span>
+    </a>
+  </div>
+
+  <p class="footer">
+&copy; 2026 Sector Creativo, S.A. de C.V.<br>
+Design by <a href="#">robcorlab</a>
+  </p>
+
+</div>
+</body>
+</html>
