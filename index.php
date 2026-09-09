@@ -28,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], (string)$csrfToken)) {
         $error = 'Tu sesión expiró. Recarga la página e intenta de nuevo.';
     } elseif ($honeypot !== '') {
-        // Spam detectado: responder como éxito silenciosamente
         $enviado = true;
     } else {
         $nombre   = $old['nombre'];
@@ -59,7 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $headers .= "X-Mailer: PHP/" . phpversion();
 
             if ($esLocal) {
-                // Modo desarrollo: sin MTA local, se guarda en logs/
                 $logDir = __DIR__ . '/logs';
                 if (!is_dir($logDir)) { @mkdir($logDir, 0755, true); }
                 $fecha = date('Y-m-d_H-i-s');
@@ -84,26 +82,64 @@ if (empty($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(16));
 }
 $csrf = $_SESSION['csrf'];
+
+// ============ DATOS REALES (verificados con el cliente 2026-09-09) ============
+$clientes = [
+    'AGUA LIV', 'FARMACIAS CALDERON', 'MEDLINE', 'RHEEM', 'CHROMALOX',
+    'TELEFLEX', 'HOSPITAL SAN GERARDO', 'MARISCOS LA LAGUNA', 'CEVICHE 76',
+    'ALITAS & TARROS', 'LA BOTANERIA', 'MUNICIPIO DE NUEVO LAREDO', 'CENTRO CULTURAL'
+];
+
+$stats = [
+    ['num' => 30, 'suffix' => '',  'label' => 'años creando'],
+    ['num' => 13, 'suffix' => '+', 'label' => 'clientes corporativos'],
+    ['num' => 8,  'suffix' => '',  'label' => 'servicios especializados'],
+];
+
+$procesos = [
+    ['01', 'Escucha',      'Entendemos tu marca, tu mercado y el objetivo real de cada pieza.'],
+    ['02', 'Diseño',       'Conceptualizamos y validamos la propuesta visual contigo.'],
+    ['03', 'Producción',   'Impresión, corte, grabado y acabados en nuestros talleres.'],
+    ['04', 'Instalación',  'Entrega, montaje e instalación en sitio cuando lo requiere.'],
+];
+
+// Categorías PROVISIONALES (se confirman/ajustan visualmente en Task 10)
+$proyectos = [
+    ['n' => 1,  'cat' => 'Gran Formato', 'alt' => 'Lona publicitaria de gran formato instalada — Sector Creativo'],
+    ['n' => 2,  'cat' => 'Rotulación',   'alt' => 'Rotulación vehicular con livery corporativa — Sector Creativo'],
+    ['n' => 3,  'cat' => 'Letreros',     'alt' => 'Letrero luminoso de fachada LED — Sector Creativo'],
+    ['n' => 4,  'cat' => 'Diseño Gráfico','alt' => 'Pieza de diseño editorial e identidad — Sector Creativo'],
+    ['n' => 5,  'cat' => 'Serigrafía',   'alt' => 'Serigrafía textil personalizada — Sector Creativo'],
+    ['n' => 6,  'cat' => 'Láser',        'alt' => 'Corte y grabado láser de precisión — Sector Creativo'],
+    ['n' => 7,  'cat' => 'CNC',          'alt' => 'Corte CNC en acrílico y MDF — Sector Creativo'],
+    ['n' => 8,  'cat' => 'Gran Formato', 'alt' => 'Valla publicitaria y pendones — Sector Creativo'],
+    ['n' => 9,  'cat' => 'Rotulación',   'alt' => 'Rotulación de vidrio y fachada — Sector Creativo'],
+    ['n' => 10, 'cat' => 'Letreros',     'alt' => 'Anuncio luminoso tipo neón LED — Sector Creativo'],
+];
+$cats = array_values(array_unique(array_column($proyectos, 'cat')));
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="no-js">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sector Creativo | Comunicación Visual — Diseño, Impresión, Rotulación, CNC y Láser</title>
-<meta name="description" content="Sector Creativo, Nuevo Laredo: comunicación visual de alto impacto. Diseño gráfico, impresión gran formato y digital, rotulación vehicular, corte CNC, grabado láser, serigrafía y letreros luminosos.">
+<meta name="description" content="Sector Creativo, Nuevo Laredo: comunicación visual de alto impacto desde hace 30 años. Diseño gráfico, impresión gran formato y digital, rotulación vehicular, corte CNC, grabado láser, serigrafía y letreros luminosos.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Sector Creativo | Comunicación Visual">
-<meta property="og:description" content="Diseño, impresión, rotulación, CNC, láser, serigrafía y letreros luminosos en Nuevo Laredo, Tamaulipas.">
+<meta property="og:description" content="30 años de diseño, impresión, rotulación, CNC, láser, serigrafía y letreros luminosos en Nuevo Laredo, Tamaulipas.">
 <meta property="og:url" content="https://www.sectorcreativo.com.mx/">
-<meta property="og:image" content="https://www.sectorcreativo.com.mx/logo_sc_3.svg">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://www.sectorcreativo.com.mx/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#050508">
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
+<script>
+document.documentElement.classList.replace('no-js', 'js');
+</script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -112,10 +148,11 @@ $csrf = $_SESSION['csrf'];
   "legalName": "Sector Creativo, S.A. de C.V.",
   "url": "https://www.sectorcreativo.com.mx",
   "logo": "https://www.sectorcreativo.com.mx/logo_sc_3.svg",
-  "image": "https://www.sectorcreativo.com.mx/logo_sc_3.svg",
-  "description": "Comunicación visual: diseño gráfico, impresión gran formato y digital, rotulación, corte CNC, grabado láser, serigrafía y letreros luminosos.",
+  "image": "https://www.sectorcreativo.com.mx/og-image.png",
+  "description": "Comunicación visual: diseño gráfico, impresión gran formato y digital, rotulación, corte CNC, grabado láser, serigrafía y letreros luminosos. 30 años de trayectoria.",
   "telephone": "+528672179046",
   "email": "atencion1@sectorcreativo.com.mx",
+  "foundingDate": "1996",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Venustiano Carranza 2800, Col. Guerrero",
@@ -135,8 +172,21 @@ $csrf = $_SESSION['csrf'];
 </head>
 <body>
 
+<!-- Skip-link accesible -->
+<a class="skip-link" href="#servicios">Saltar al contenido</a>
+
 <!-- Fondo de ruido sutil -->
 <div class="noise" aria-hidden="true"></div>
+
+<!-- Barra de progreso de scroll -->
+<div id="scrollProgress" aria-hidden="true"></div>
+
+<!-- ================= PRELOADER ================= -->
+<div id="preloader" aria-hidden="true">
+  <img src="logo_sc_3.svg" alt="" width="150" height="45">
+  <div class="preloader-bar"><span></span></div>
+  <div class="preloader-count">0%</div>
+</div>
 
 <!-- ================= HEADER ================= -->
 <header id="header">
@@ -145,13 +195,16 @@ $csrf = $_SESSION['csrf'];
   </a>
   <nav id="navMenu" aria-label="Navegación principal">
     <a href="#servicios">Servicios</a>
+    <a href="#clientes">Clientes</a>
     <a href="#proyectos">Proyectos</a>
     <a href="#contacto">Contacto</a>
   </nav>
-  <button class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false">
+  <button class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="navMenu">
     <span></span><span></span><span></span>
   </button>
 </header>
+
+<main id="contenido">
 
 <!-- ================= HERO 3D ================= -->
 <section class="hero" id="inicio">
@@ -160,6 +213,7 @@ $csrf = $_SESSION['csrf'];
     <p class="hero-eyebrow">Comunicación Visual · Nuevo Laredo</p>
     <h1 class="hero-title"><span>We are all</span><span class="grad-text">Creative</span></h1>
     <p class="hero-tagline">Diseño · Impresión · Rotulación · CNC · Láser &mdash; de la idea al impacto.</p>
+    <div class="hero-badge" role="text">⚡ 30 años creando</div>
     <div class="hero-cta">
       <a href="#servicios" class="btn btn-primary">Explorar servicios</a>
       <a href="#contacto" class="btn btn-ghost">Cotizar ahora</a>
@@ -170,30 +224,52 @@ $csrf = $_SESSION['csrf'];
   </a>
 </section>
 
-<!-- ================= MARQUEE ================= -->
-<div class="marquee" aria-hidden="true">
-  <div class="marquee-track">
-    <span>Diseño Gráfico</span><span>✦</span>
-    <span>Impresión Gran Formato</span><span>✦</span>
-    <span>Impresión Digital</span><span>✦</span>
-    <span>Rotulación Vehicular</span><span>✦</span>
-    <span>Corte CNC</span><span>✦</span>
-    <span>Grabado Láser</span><span>✦</span>
-    <span>Serigrafía</span><span>✦</span>
-    <span>Letreros Luminosos</span><span>✦</span>
-    <span>Acabados Especiales</span><span>✦</span>
-    <!-- duplicado para loop continuo -->
-    <span>Diseño Gráfico</span><span>✦</span>
-    <span>Impresión Gran Formato</span><span>✦</span>
-    <span>Impresión Digital</span><span>✦</span>
-    <span>Rotulación Vehicular</span><span>✦</span>
-    <span>Corte CNC</span><span>✦</span>
-    <span>Grabado Láser</span><span>✦</span>
-    <span>Serigrafía</span><span>✦</span>
-    <span>Letreros Luminosos</span><span>✦</span>
-    <span>Acabados Especiales</span><span>✦</span>
+<!-- ================= MARQUEE BAND (inclinado) ================= -->
+<div class="marquee-band" aria-hidden="true">
+  <div class="marquee">
+    <div class="marquee-track">
+      <span>Diseño Gráfico</span><span>✦</span>
+      <span>Impresión Gran Formato</span><span>✦</span>
+      <span>Impresión Digital</span><span>✦</span>
+      <span>Rotulación Vehicular</span><span>✦</span>
+      <span>Corte CNC</span><span>✦</span>
+      <span>Grabado Láser</span><span>✦</span>
+      <span>Serigrafía</span><span>✦</span>
+      <span>Letreros Luminosos</span><span>✦</span>
+      <span>Acabados Especiales</span><span>✦</span>
+      <span>Diseño Gráfico</span><span>✦</span>
+      <span>Impresión Gran Formato</span><span>✦</span>
+      <span>Impresión Digital</span><span>✦</span>
+      <span>Rotulación Vehicular</span><span>✦</span>
+      <span>Corte CNC</span><span>✦</span>
+      <span>Grabado Láser</span><span>✦</span>
+      <span>Serigrafía</span><span>✦</span>
+      <span>Letreros Luminosos</span><span>✦</span>
+      <span>Acabados Especiales</span><span>✦</span>
+    </div>
   </div>
 </div>
+
+<!-- ================= CLIENTES ================= -->
+<section class="section" id="clientes">
+  <div class="section-head reveal">
+    <p class="section-kicker">Confianza</p>
+    <h2>Marcas que confían</h2>
+    <p class="section-sub">Tres décadas produciendo comunicación visual para empresas e instituciones de la región.</p>
+  </div>
+  <div class="clients-marquee reveal">
+    <div class="clients-track">
+      <?php foreach (array_merge($clientes, $clientes) as $c): ?>
+      <span class="client-name"><?= htmlspecialchars($c, ENT_QUOTES, 'UTF-8') ?></span><span class="client-sep">✦</span>
+      <?php endforeach; ?>
+    </div>
+    <div class="clients-track reverse" aria-hidden="true">
+      <?php foreach (array_merge(array_reverse($clientes), array_reverse($clientes)) as $c): ?>
+      <span class="client-name"><?= htmlspecialchars($c, ENT_QUOTES, 'UTF-8') ?></span><span class="client-sep">✦</span>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</section>
 
 <!-- ================= SERVICIOS ================= -->
 <section class="section" id="servicios">
@@ -252,7 +328,7 @@ $csrf = $_SESSION['csrf'];
     <article class="service-card tilt reveal" style="--d:<?= $i * 0.06 ?>s" data-index="<?= $i ?>">
       <div class="service-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="<?= $icon ?>"/>
+          <path class="se-icon" d="<?= $icon ?>"/>
         </svg>
       </div>
       <h3><?= htmlspecialchars($nombre, ENT_QUOTES, 'UTF-8') ?></h3>
@@ -266,7 +342,40 @@ $csrf = $_SESSION['csrf'];
   </div>
 </section>
 
-<!-- ================= PROYECTOS ================= -->
+<!-- ================= PROCESO ================= -->
+<section class="section" id="proceso">
+  <div class="section-head reveal">
+    <p class="section-kicker">Cómo trabajamos</p>
+    <h2>De la idea al impacto</h2>
+    <p class="section-sub">Un proceso claro de 4 pasos para que tu proyecto llegue a tiempo y con la calidad que tu marca merece.</p>
+  </div>
+  <div class="process-wrap reveal">
+    <div class="process-rail" aria-hidden="true"><span class="process-rail-fill" id="processFill"></span></div>
+    <div class="process-grid">
+      <?php foreach ($procesos as $idx => $p): ?>
+      <div class="process-step reveal" style="--d:<?= $idx * 0.12 ?>s" data-step="<?= $idx + 1 ?>">
+        <div class="step-num"><?= $p[0] ?></div>
+        <h3 class="step-title"><?= $p[1] ?></h3>
+        <p class="step-txt"><?= $p[2] ?></p>
+      </div>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ESTADÍSTICAS ================= -->
+<section class="section" id="estadisticas">
+  <div class="stats-grid">
+    <?php foreach ($stats as $s): ?>
+    <div class="stat reveal" style="--d:<?= ($s['num'] * 0.02) ?>s">
+      <div class="stat-num" data-count="<?= $s['num'] ?>" data-suffix="<?= htmlspecialchars($s['suffix'], ENT_QUOTES, 'UTF-8') ?>">0</div>
+      <div class="stat-label"><?= $s['label'] ?></div>
+    </div>
+    <?php endforeach; ?>
+  </div>
+</section>
+
+<!-- ================= PORTFOLIO BENTO ================= -->
 <section class="section" id="proyectos">
   <div class="section-head reveal">
     <p class="section-kicker">Portafolio</p>
@@ -274,13 +383,20 @@ $csrf = $_SESSION['csrf'];
     <p class="section-sub">Trabajo real producido en nuestros talleres. Toca una imagen para verla en grande.</p>
   </div>
 
-  <div class="galeria-grid" id="galeriaGrid">
-    <?php for ($p = 1; $p <= 10; $p++): ?>
-    <figure class="item reveal" style="--d:<?= $p * 0.04 ?>s">
-      <img src="img/proyecto<?= $p ?>.png" alt="Proyecto <?= $p ?> — Sector Creativo" loading="lazy" decoding="async" width="800" height="600">
-      <figcaption>Proyecto <?= $p ?></figcaption>
+  <div class="filters reveal" role="group" aria-label="Filtrar proyectos por servicio">
+    <button class="chip active" data-filter="todos" type="button">Todos</button>
+    <?php foreach ($cats as $cat): ?>
+    <button class="chip" data-filter="<?= htmlspecialchars($cat, ENT_QUOTES, 'UTF-8') ?>" type="button"><?= htmlspecialchars($cat, ENT_QUOTES, 'UTF-8') ?></button>
+    <?php endforeach; ?>
+  </div>
+
+  <div class="galeria-grid galeria-bento" id="galeriaGrid">
+    <?php foreach ($proyectos as $p): ?>
+    <figure class="item reveal<?= $p['n'] % 3 === 0 ? ' item-wide' : '' ?>" data-cat="<?= htmlspecialchars($p['cat'], ENT_QUOTES, 'UTF-8') ?>" style="--d:<?= $p['n'] * 0.03 ?>s">
+      <img src="img/proyecto<?= $p['n'] ?>.png" data-full="img/proyecto<?= $p['n'] ?>.png" alt="<?= htmlspecialchars($p['alt'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy" decoding="async" width="800" height="600">
+      <figcaption><span class="cap-cat"><?= htmlspecialchars($p['cat'], ENT_QUOTES, 'UTF-8') ?></span><span class="cap-num">Proyecto <?= $p['n'] ?></span></figcaption>
     </figure>
-    <?php endfor; ?>
+    <?php endforeach; ?>
   </div>
 </section>
 
@@ -319,7 +435,7 @@ $csrf = $_SESSION['csrf'];
 
     <div class="contact-form-wrap">
       <?php if ($enviado): ?>
-      <div class="form-alert success">
+      <div class="form-alert success" role="status">
         <?php if ($modoDemo): ?>
           ✅ Modo desarrollo: mensaje capturado (no se envió correo). Revisa <code>logs/</code> en la copia local.
         <?php else: ?>
@@ -327,43 +443,66 @@ $csrf = $_SESSION['csrf'];
         <?php endif; ?>
       </div>
       <?php elseif ($error): ?>
-      <div class="form-alert error">⚠️ <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></div>
+      <div class="form-alert error" role="alert">⚠️ <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></div>
       <?php endif; ?>
 
       <form method="POST" action="" id="contactForm" novalidate>
-        <!-- honeypot anti-spam (oculto) -->
         <input type="text" name="website" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
         <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8') ?>">
 
         <div class="form-row">
           <div class="form-field">
             <label for="f-nombre">Nombre</label>
-            <input type="text" id="f-nombre" name="nombre" value="<?= htmlspecialchars($old['nombre'], ENT_QUOTES, 'UTF-8') ?>" required minlength="2" maxlength="100" placeholder="Tu nombre">
+            <input type="text" id="f-nombre" name="nombre" value="<?= htmlspecialchars($old['nombre'], ENT_QUOTES, 'UTF-8') ?>" required minlength="2" maxlength="100" placeholder="Tu nombre" aria-describedby="err-nombre">
+            <p class="field-error" id="err-nombre" hidden></p>
           </div>
           <div class="form-field">
             <label for="f-email">Correo electrónico</label>
-            <input type="email" id="f-email" name="email" value="<?= htmlspecialchars($old['email'], ENT_QUOTES, 'UTF-8') ?>" required placeholder="tucorreo@ejemplo.com">
+            <input type="email" id="f-email" name="email" value="<?= htmlspecialchars($old['email'], ENT_QUOTES, 'UTF-8') ?>" required placeholder="tucorreo@ejemplo.com" aria-describedby="err-email">
+            <p class="field-error" id="err-email" hidden></p>
           </div>
         </div>
         <div class="form-field">
           <label for="f-telefono">Teléfono <span class="opt">(opcional)</span></label>
-          <input type="tel" id="f-telefono" name="telefono" value="<?= htmlspecialchars($old['telefono'], ENT_QUOTES, 'UTF-8') ?>" pattern="[\d\s\-\+\(\)]{7,20}" placeholder="+52 ...">
+          <input type="tel" id="f-telefono" name="telefono" value="<?= htmlspecialchars($old['telefono'], ENT_QUOTES, 'UTF-8') ?>" pattern="[\d\s\-\+\(\)]{7,20}" placeholder="+52 ..." aria-describedby="err-telefono">
+          <p class="field-error" id="err-telefono" hidden></p>
         </div>
         <div class="form-field">
           <label for="f-mensaje">Mensaje</label>
-          <textarea id="f-mensaje" name="mensaje" rows="5" required minlength="5" maxlength="5000" placeholder="Cuéntanos qué necesitas…"><?= htmlspecialchars($old['mensaje'], ENT_QUOTES, 'UTF-8') ?></textarea>
+          <textarea id="f-mensaje" name="mensaje" rows="5" required minlength="5" maxlength="5000" placeholder="Cuéntanos qué necesitas…" aria-describedby="err-mensaje"><?= htmlspecialchars($old['mensaje'], ENT_QUOTES, 'UTF-8') ?></textarea>
+          <p class="field-error" id="err-mensaje" hidden></p>
         </div>
-        <button type="submit" class="btn btn-primary btn-block">Enviar mensaje</button>
+        <button type="submit" class="btn btn-primary btn-block" id="btnSubmit">
+          <span class="btn-label">Enviar mensaje</span><span class="btn-spinner" aria-hidden="true"></span>
+        </button>
         <p class="form-note">Respuesta típica en menos de 24 h hábiles.</p>
       </form>
     </div>
   </div>
 </section>
 
+</main>
+
 <!-- ================= FOOTER ================= -->
 <footer>
   <div class="footer-inner">
-    <img src="logo_sc_3.svg" alt="Sector Creativo" class="footer-logo" width="120" height="36">
+    <div class="footer-brand">
+      <img src="logo_sc_3.svg" alt="Sector Creativo" class="footer-logo" width="120" height="36">
+      <p>Comunicación visual de alto impacto desde 1996.<br>Nuevo Laredo, Tamaulipas.</p>
+    </div>
+    <div class="footer-nav">
+      <h4>Navegación</h4>
+      <a href="#servicios">Servicios</a>
+      <a href="#clientes">Clientes</a>
+      <a href="#proyectos">Proyectos</a>
+      <a href="#contacto">Contacto</a>
+    </div>
+    <div class="footer-services">
+      <h4>Servicios</h4>
+      <span>Diseño Gráfico</span><span>Gran Formato</span><span>Rotulación</span><span>CNC y Láser</span><span>Serigrafía</span><span>Letreros Luminosos</span>
+    </div>
+  </div>
+  <div class="footer-bottom">
     <p>&copy; 2026 Sector Creativo, S.A. de C.V. · Nuevo Laredo, Tamaulipas</p>
     <p class="footer-credits">Design by <span class="robcor">RobCor</span></p>
   </div>
@@ -380,6 +519,9 @@ $csrf = $_SESSION['csrf'];
   <button class="lightbox-nav next" id="lbNext" aria-label="Siguiente">&#10095;</button>
   <span class="lightbox-counter" id="lbCounter"></span>
 </div>
+
+<!-- Back to top -->
+<button id="backTop" aria-label="Volver arriba" hidden>&#8593;</button>
 
 <!-- WhatsApp flotante -->
 <a class="wa-float" href="https://wa.me/528672179046?text=Hola%20Sector%20Creativo%2C%20quiero%20una%20cotizaci%C3%B3n." target="_blank" rel="noopener" aria-label="Cotizar por WhatsApp">
