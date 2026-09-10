@@ -393,7 +393,7 @@ document.documentElement.classList.replace('no-js', 'js');
   <div class="galeria-grid galeria-bento" id="galeriaGrid">
     <?php foreach ($proyectos as $p): ?>
     <figure class="item reveal<?= $p['n'] % 3 === 0 ? ' item-wide' : '' ?>" data-cat="<?= htmlspecialchars($p['cat'], ENT_QUOTES, 'UTF-8') ?>" style="--d:<?= $p['n'] * 0.03 ?>s">
-      <img src="img/proyecto<?= $p['n'] ?>.png" data-full="img/proyecto<?= $p['n'] ?>.png" alt="<?= htmlspecialchars($p['alt'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy" decoding="async" width="800" height="600">
+      <img src="img/thumbs/proyecto<?= $p['n'] ?>.webp" data-full="img/proyecto<?= $p['n'] ?>.png" alt="<?= htmlspecialchars($p['alt'], ENT_QUOTES, 'UTF-8') ?>" loading="lazy" decoding="async" width="800" height="600">
       <figcaption><span class="cap-cat"><?= htmlspecialchars($p['cat'], ENT_QUOTES, 'UTF-8') ?></span><span class="cap-num">Proyecto <?= $p['n'] ?></span></figcaption>
     </figure>
     <?php endforeach; ?>
