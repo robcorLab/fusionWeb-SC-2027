@@ -262,6 +262,222 @@ html.no-js .reveal { opacity: 1; transform: none; }
 /* (Las tareas siguientes insertan aquí su CSS, ANTES del media query
    prefers-reduced-motion que está al final del archivo) */
 
+/* ============ BLOQUE B — HERO ============ */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+#hero3d {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 45% at 50% 40%, rgba(255, 68, 68, 0.16), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 20% 75%, rgba(0, 229, 255, 0.10), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 82% 30%, rgba(255, 68, 170, 0.10), transparent 70%);
+  animation: pulsoGlow 9s ease-in-out infinite alternate;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 75%);
+}
+
+@keyframes pulsoGlow {
+  0%   { opacity: 0.7; transform: scale(1); }
+  100% { opacity: 1;   transform: scale(1.08); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 120px 24px 80px;
+  max-width: 1100px;
+  will-change: transform, opacity;
+}
+
+.hero-eyebrow {
+  display: inline-block;
+  font-size: 0.8rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 20px;
+  margin-bottom: 28px;
+  backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.03);
+  animation: fadeDown 0.9s var(--ease-out) both;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(2.8rem, 10vw, 8.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.hero-title span { display: block; animation: fadeUp 1s var(--ease-out) both; }
+.hero-title span:nth-child(2) { animation-delay: 0.15s; }
+
+.hero-title .grad-text {
+  background: var(--grad-marca);
+  background-size: var(--grad-marca-size);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradienteLento 10s ease infinite, fadeUp 1s var(--ease-out) 0.15s both;
+}
+
+.hero-tagline {
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  color: var(--text-dim);
+  max-width: 620px;
+  margin: 0 auto 26px;
+  animation: fadeUp 1s var(--ease-out) 0.3s both;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 68, 68, 0.45);
+  border-radius: 999px;
+  padding: 10px 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 0 24px rgba(255, 68, 68, 0.25), inset 0 0 18px rgba(255, 68, 68, 0.08);
+  animation: fadeUp 1s var(--ease-out) 0.38s both, badgePulse 3s ease-in-out infinite;
+  backdrop-filter: blur(6px);
+}
+
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 24px rgba(255, 68, 68, 0.25), inset 0 0 18px rgba(255, 68, 68, 0.08); }
+  50%      { box-shadow: 0 0 38px rgba(255, 68, 68, 0.5), inset 0 0 24px rgba(255, 68, 170, 0.15); }
+}
+
+.hero-cta { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; animation: fadeUp 1s var(--ease-out) 0.45s both; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 16px 34px;
+  border-radius: 999px;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.3s var(--ease-out), box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.btn-primary {
+  background: var(--grad-marca);
+  background-size: var(--grad-marca-size);
+  color: #050508;
+  animation: gradienteLento 10s ease infinite;
+  box-shadow: 0 0 28px rgba(255, 68, 68, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+/* shine sweep */
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: -60%;
+  width: 50%;
+  height: 180%;
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: skewX(-25deg);
+  transition: left 0.6s var(--ease-out);
+  pointer-events: none;
+}
+.btn-primary:hover::after { left: 130%; }
+
+.btn-primary:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 0 44px rgba(255, 68, 170, 0.5); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(4px);
+}
+
+.btn-ghost:hover { transform: translateY(-3px); border-color: var(--cian-neon); color: var(--cian-neon); box-shadow: 0 0 24px rgba(0, 229, 255, 0.2); }
+
+.btn-block { width: 100%; }
+
+.scroll-hint {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  width: 26px;
+  height: 44px;
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  animation: fadeUp 1s var(--ease-out) 0.8s both;
+}
+
+.scroll-hint span {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 4px;
+  height: 8px;
+  margin-left: -2px;
+  border-radius: 2px;
+  background: var(--magenta);
+  animation: scrollPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0%   { transform: translateY(0); opacity: 1; }
+  70%  { transform: translateY(14px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+
 /* ============================================================
    RESPONSIVE
    ============================================================ */

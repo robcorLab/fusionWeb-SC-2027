@@ -216,6 +216,27 @@
     });
   }
 
+  /* ================= PARALLAX TÍTULO (scroll) ================= */
+  var heroContent = qs('.hero-content');
+  var heroEl = qs('.hero');
+  if (heroContent && heroEl && !reducedMotion) {
+    var rafParallax = null;
+
+    function onParallaxScroll() {
+      if (rafParallax) return;
+      rafParallax = requestAnimationFrame(function () {
+        rafParallax = null;
+        var rect = heroEl.getBoundingClientRect();
+        if (rect.bottom < 0) return;
+        var sc = Math.min(window.scrollY, window.innerHeight * 1.4);
+        var p = sc / (window.innerHeight * 1.4);
+        heroContent.style.transform = 'translateY(' + (sc * 0.22) + 'px)';
+        heroContent.style.opacity = String(Math.max(1 - p * 1.05, 0));
+      });
+    }
+    window.addEventListener('scroll', onParallaxScroll, { passive: true });
+  }
+
   /* ================= SCROLL REVEAL ================= */
   var revealEls = qsa('.reveal');
   if ('IntersectionObserver' in window && !reducedMotion) {

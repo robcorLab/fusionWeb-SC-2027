@@ -1,8 +1,10 @@
 /* ============================================================
    SECTOR CREATIVO — hero3d.js
    Campo de partículas 3D estilo constelación creativa.
-   - Colores de marca (rojo, amarillo, cian, magenta)
-   - Rotación lenta + parallax con el mouse
+   - 3 capas: núcleo esférico + anillo orbital + fondo lejano
+   - Líneas de constelación (pares cercanos, calculadas 1 sola vez)
+   - Reacción al scroll (profundidad) y parallax con el mouse
+   - Conteo de partículas adaptativo por viewport + DPR < 2 en móvil
    - Fallback elegante si WebGL o el CDN fallan
    ============================================================ */
 (function () {
@@ -11,16 +13,16 @@
   var canvas = document.getElementById('hero3d');
   if (!canvas) return;
 
-  // Si Three.js no cargó (CDN caído) o no hay WebGL: salir con elegancia.
   if (typeof window.THREE === 'undefined') return;
   if (!window.WebGLRenderingContext) return;
 
-  var renderer, scene, camera, particles, particles2, group;
+  var renderer, scene, camera, group;
+  var particles, particles2, bgPoints, lines;
   var mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var rafId = null;
+  var hidden = false;
 
-  // Colores de la marca (rojo, amarillo, cian, magenta)
   var COLORS = [
     new THREE.Color(0xff4444),
     new THREE.Color(0xffcc00),
@@ -28,121 +30,141 @@
     new THREE.Color(0xff44aa)
   ];
 
-  function init() {
-    renderer = new THREE.WebGLRenderer({
-      canvas: canvas,
-      antialias: true,
-      alpha: true
+  function countsFor(w) {
+    if (w < 480)  return { core: 500,  ring: 160, bg: 260,  lineNodes: 60 };
+    if (w < 768)  return { core: 750,  ring: 220, bg: 380,  lineNodes: 90 };
+    if (w < 1280) return { core: 1100, ring: 300, bg: 500,  lineNodes: 130 };
+    return           { core: 1400, ring: 350, bg: 600,  lineNodes: 170 };
+  }
+
+  function buildCore(count) {
+    var geo = new THREE.BufferGeometry();
+    var positions = new Float32Array(count * 3);
+    var colors = new Float32Array(count * 3);
+    for (var i = 0; i < count; i++) {
+      var radius = 2.4 + Math.random() * 1.8;
+      var theta = Math.random() * Math.PI * 2;
+      var phi = Math.acos(2 * Math.random() - 1);
+      positions[i * 3]     = radius * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta) * 0.7;
+      positions[i * 3 + 2] = radius * Math.cos(phi);
+      var c = COLORS[Math.floor(Math.random() * COLORS.length)];
+      colors[i * 3] = c.r; colors[i * 3 + 1] = c.g; colors[i * 3 + 2] = c.b;
+    }
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    return geo;
+  }
+
+  function buildRing(count) {
+    var geo = new THREE.BufferGeometry();
+    var positions = new Float32Array(count * 3);
+    var colors = new Float32Array(count * 3);
+    for (var j = 0; j < count; j++) {
+      var a = (j / count) * Math.PI * 2;
+      var rr = 4.2 + Math.random() * 0.35;
+      var wob = Math.sin(a * 6) * 0.35;
+      positions[j * 3]     = Math.cos(a) * rr;
+      positions[j * 3 + 1] = Math.sin(a * 2.5) * 0.7 + wob * 0.3;
+      positions[j * 3 + 2] = Math.sin(a) * rr;
+      var c2 = COLORS[j % COLORS.length];
+      colors[j * 3] = c2.g; colors[j * 3 + 1] = c2.r; colors[j * 3 + 2] = c2.b;
+    }
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    return geo;
+  }
+
+  // Líneas de constelación: conecta pares de nodos (muestra del anillo
+  // + muestra del núcleo) cuya distancia < umbral. Se calcula UNA vez.
+  function buildConstellation(nodeCount, ringCount) {
+    var nodes = [];
+    var i;
+    for (i = 0; i < ringCount; i++) {
+      var a = (i / ringCount) * Math.PI * 2;
+      nodes.push([Math.cos(a) * 4.2, Math.sin(a * 2.5) * 0.7, Math.sin(a) * 4.2]);
+    }
+    for (i = 0; i < nodeCount; i++) {
+      var r = 2.4 + Math.random() * 1.5;
+      var t = Math.random() * Math.PI * 2;
+      var p = Math.acos(2 * Math.random() - 1);
+      nodes.push([r * Math.sin(p) * Math.cos(t), r * Math.sin(p) * Math.sin(t) * 0.7, r * Math.cos(p)]);
+    }
+    var pts = [];
+    var THRESH = 1.35;
+    for (i = 0; i < nodes.length; i++) {
+      for (var j = i + 1; j < nodes.length; j++) {
+        var dx = nodes[i][0] - nodes[j][0];
+        var dy = nodes[i][1] - nodes[j][1];
+        var dz = nodes[i][2] - nodes[j][2];
+        if (dx * dx + dy * dy + dz * dz < THRESH * THRESH) {
+          pts.push(nodes[i][0], nodes[i][1], nodes[i][2]);
+          pts.push(nodes[j][0], nodes[j][1], nodes[j][2]);
+        }
+      }
+    }
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+    var mat = new THREE.LineBasicMaterial({
+      color: 0x44ffcc,
+      transparent: true,
+      opacity: 0.16,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    return new THREE.LineSegments(geo, mat);
+  }
+
+  function init() {
+    var w = canvas.parentElement.clientWidth || window.innerWidth;
+    var counts = countsFor(w);
+
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, w < 768 ? 1.5 : 2));
 
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
-    camera.position.z = 8;
+    camera.position.z = w < 768 ? 10.5 : 8;
     camera.position.y = 0.6;
 
     group = new THREE.Group();
     scene.add(group);
 
-    // ---- Capa 1: esfera de partículas (núcleo) ----
-    var count = 1400;
-    var geo = new THREE.BufferGeometry();
-    var positions = new Float32Array(count * 3);
-    var colors = new Float32Array(count * 3);
-
-    for (var i = 0; i < count; i++) {
-      // Distribución esférica con radio variable (nube irregular)
-      var radius = 2.4 + Math.random() * 1.8;
-      var theta = Math.random() * Math.PI * 2;
-      var phi = Math.acos(2 * Math.random() - 1);
-
-      var x = radius * Math.sin(phi) * Math.cos(theta);
-      var y = radius * Math.sin(phi) * Math.sin(theta) * 0.7; // achatado
-      var z = radius * Math.cos(phi);
-
-      positions[i * 3] = x;
-      positions[i * 3 + 1] = y;
-      positions[i * 3 + 2] = z;
-
-      var c = COLORS[Math.floor(Math.random() * COLORS.length)];
-      colors[i * 3] = c.r;
-      colors[i * 3 + 1] = c.g;
-      colors[i * 3 + 2] = c.b;
-    }
-
-    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
+    var geo = buildCore(counts.core);
     var mat = new THREE.PointsMaterial({
-      size: 0.055,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.9,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false
+      size: 0.055, vertexColors: true, transparent: true, opacity: 0.9,
+      blending: THREE.AdditiveBlending, depthWrite: false
     });
-
     particles = new THREE.Points(geo, mat);
     group.add(particles);
 
-    // ---- Capa 2: anillo orbital de partículas ----
-    var count2 = 350;
-    var geo2 = new THREE.BufferGeometry();
-    var positions2 = new Float32Array(count2 * 3);
-    var colors2 = new Float32Array(count2 * 3);
-
-    for (var j = 0; j < count2; j++) {
-      var a = (j / count2) * Math.PI * 2;
-      var rr = 4.2 + Math.random() * 0.35;
-      var wob = Math.sin(a * 6) * 0.35;
-
-      positions2[j * 3]     = Math.cos(a) * rr;
-      positions2[j * 3 + 1] = Math.sin(a * 2.5) * 0.7 + wob * 0.3;
-      positions2[j * 3 + 2] = Math.sin(a) * rr;
-
-      var c2 = COLORS[j % COLORS.length];
-      colors2[j * 3] = c2.g;
-      colors2[j * 3 + 1] = c2.r;
-      colors2[j * 3 + 2] = c2.b;
-    }
-
-    geo2.setAttribute('position', new THREE.BufferAttribute(positions2, 3));
-    geo2.setAttribute('color', new THREE.BufferAttribute(colors2, 3));
-
+    var geo2 = buildRing(counts.ring);
     var mat2 = new THREE.PointsMaterial({
-      size: 0.03,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.6,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false
+      size: 0.03, vertexColors: true, transparent: true, opacity: 0.6,
+      blending: THREE.AdditiveBlending, depthWrite: false
     });
-
     particles2 = new THREE.Points(geo2, mat2);
     particles2.rotation.x = 0.5;
     group.add(particles2);
 
-    // ---- Capa 3: partículas de fondo lejanas ----
+    lines = buildConstellation(counts.lineNodes, counts.ring);
+    lines.rotation.x = 0.5;
+    group.add(lines);
+
     var geo3 = new THREE.BufferGeometry();
-    var positions3 = new Float32Array(600 * 3);
-    for (var k = 0; k < 600; k++) {
+    var positions3 = new Float32Array(counts.bg * 3);
+    for (var k = 0; k < counts.bg; k++) {
       positions3[k * 3]     = (Math.random() - 0.5) * 22;
       positions3[k * 3 + 1] = (Math.random() - 0.5) * 12;
       positions3[k * 3 + 2] = (Math.random() - 0.5) * 16 - 4;
     }
     geo3.setAttribute('position', new THREE.BufferAttribute(positions3, 3));
-
     var mat3 = new THREE.PointsMaterial({
-      size: 0.025,
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.28,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false
+      size: 0.025, color: 0xffffff, transparent: true, opacity: 0.28,
+      blending: THREE.AdditiveBlending, depthWrite: false
     });
-
-    var bgPoints = new THREE.Points(geo3, mat3);
+    bgPoints = new THREE.Points(geo3, mat3);
     scene.add(bgPoints);
 
     onResize();
@@ -152,23 +174,17 @@
       window.addEventListener('pointermove', onPointerMove, { passive: true });
       loop();
     } else {
-      renderFrame(); // un solo frame estático
+      renderFrame();
     }
   }
 
   function onResize() {
     var w = canvas.parentElement.clientWidth || window.innerWidth;
     var h = canvas.parentElement.clientHeight || window.innerHeight;
-
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
-
-    if (w < 768) {
-      camera.position.z = 10.5;
-    } else {
-      camera.position.z = 8;
-    }
+    camera.position.z = w < 768 ? 10.5 : 8;
   }
 
   function onPointerMove(e) {
@@ -177,18 +193,22 @@
   }
 
   function loop() {
+    if (hidden) { rafId = null; return; }
     rafId = requestAnimationFrame(loop);
-    // Suavizado del parallax
+
     mouseX += (targetX - mouseX) * 0.04;
     mouseY += (targetY - mouseY) * 0.04;
 
-    // Rotación autónoma lenta
     particles.rotation.y += 0.0012;
     particles.rotation.x += 0.00035;
     particles2.rotation.z += 0.0016;
     particles2.rotation.y += 0.0008;
 
-    // Parallax de cámara (el grupo se inclina hacia el mouse)
+    // Reacción al scroll: el sistema se "hunde" lentamente al bajar
+    var scrollFactor = Math.min(window.scrollY / window.innerHeight, 1);
+    group.position.y = -scrollFactor * 1.6;
+    group.rotation.z = -scrollFactor * 0.12;
+
     group.rotation.y += (mouseX * 0.28 - group.rotation.y) * 0.06;
     group.rotation.x += (mouseY * 0.18 - group.rotation.x) * 0.06;
 
@@ -203,14 +223,13 @@
     renderer.render(scene, camera);
   }
 
-  // Arranque diferido hasta que el canvas esté en pantalla
   function boot() {
     try {
       init();
       canvas.setAttribute('data-three-ready', '1');
     } catch (e) {
-      // WebGL no disponible: el hero conserva su gradiente CSS de fondo.
       canvas.style.display = 'none';
+      canvas.setAttribute('data-three-ready', '0');
       if (window.console && console.warn) console.warn('hero3d: WebGL no disponible, usando fallback CSS', e);
     }
   }
@@ -221,9 +240,14 @@
     boot();
   }
 
-  // Limpieza para evitar fugas
+  document.addEventListener('visibilitychange', function () {
+    hidden = document.hidden;
+    if (!hidden && !reducedMotion && rafId === null) loop();
+  });
+
   window.addEventListener('pagehide', function () {
     if (rafId) cancelAnimationFrame(rafId);
+    rafId = null;
     window.removeEventListener('resize', onResize);
     if (!reducedMotion) window.removeEventListener('pointermove', onPointerMove);
   });
