@@ -309,6 +309,113 @@
     }
   }
 
+  /* ================= FILTROS DE PORTAFOLIO ================= */
+  var chips = qsa('.chip[data-filter]');
+  var galItems = qsa('.galeria-bento .item[data-cat]');
+  (function initFilter() {
+    if (!chips.length || !galItems.length) return;
+    function applyFilter(filter) {
+      galItems.forEach(function (item) {
+        var show = filter === 'todos' || item.getAttribute('data-cat') === filter;
+        item.style.display = show ? '' : 'none';
+      });
+    }
+    chips.forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        chips.forEach(function (c) { c.classList.remove('active'); });
+        chip.classList.add('active');
+        applyFilter(chip.getAttribute('data-filter'));
+      });
+    });
+  })();
+
+  /* ================= LIGHTBOX (con data-full + touch) ================= */
+  var lightbox = qs('#lightbox');
+  var lbImg = qs('#lbImg');
+  var lbCaption = qs('#lbCaption');
+  var lbCounter = qs('#lbCounter');
+  var lbClose = qs('#lbClose');
+  var lbPrev = qs('#lbPrev');
+  var lbNext = qs('#lbNext');
+  var lbItems = qsa('.galeria-grid .item img');
+  var current = 0;
+  var lastFocus = null;
+  var touchX = null;
+
+  function showImage(index) {
+    if (!lbItems.length) return;
+    current = (index + lbItems.length) % lbItems.length;
+    var img = lbItems[current];
+    lbImg.src = img.getAttribute('data-full') || img.src;
+    lbImg.alt = img.alt || '';
+    lbCaption.textContent = (img.alt || '').replace(' — Sector Creativo', '');
+    lbCounter.textContent = (current + 1) + ' / ' + lbItems.length;
+  }
+
+  function openLightbox(index) {
+    if (!lightbox) return;
+    lastFocus = doc.activeElement;
+    showImage(index);
+    lightbox.hidden = false;
+    requestAnimationFrame(function () { lightbox.classList.add('open'); });
+    doc.body.style.overflow = 'hidden';
+    if (lbClose) lbClose.focus();
+  }
+
+  function closeLightbox() {
+    if (!lightbox) return;
+    lightbox.classList.remove('open');
+    doc.body.style.overflow = '';
+    setTimeout(function () { lightbox.hidden = true; }, 350);
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  function changeImage(dir) {
+    if (lbItems.length) showImage(current + dir);
+  }
+
+  if (lightbox) {
+    lbItems.forEach(function (img, i) {
+      img.addEventListener('click', function () { openLightbox(i); });
+    });
+
+    if (lbClose) lbClose.addEventListener('click', closeLightbox);
+    if (lbPrev) lbPrev.addEventListener('click', function () { changeImage(-1); });
+    if (lbNext) lbNext.addEventListener('click', function () { changeImage(1); });
+
+    lightbox.addEventListener('click', function (e) {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    // Touch swipe en móvil
+    var lbFigure = qs('.lightbox-figure');
+    if (isTouch && lbFigure) {
+      lbFigure.addEventListener('touchstart', function (e) { touchX = e.touches[0].clientX; }, { passive: true });
+      lbFigure.addEventListener('touchend', function (e) {
+        if (touchX === null) return;
+        var dx = e.changedTouches[0].clientX - touchX;
+        if (Math.abs(dx) > 50) changeImage(dx < 0 ? 1 : -1);
+        touchX = null;
+      }, { passive: true });
+    }
+
+    // Focus trap
+    doc.addEventListener('keydown', function (e) {
+      if (lightbox.hidden) return;
+      if (e.key === 'Escape') { closeLightbox(); return; }
+      if (e.key === 'ArrowLeft') { changeImage(-1); return; }
+      if (e.key === 'ArrowRight') { changeImage(1); return; }
+      if (e.key === 'Tab') {
+        var focusables = qsa('button', lightbox).filter(function (b) { return !b.hidden; });
+        if (!focusables.length) return;
+        var first = focusables[0];
+        var last = focusables[focusables.length - 1];
+        if (e.shiftKey && doc.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && doc.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+  }
+
   /* ================= SCROLL REVEAL ================= */
   var revealEls = qsa('.reveal');
   if ('IntersectionObserver' in window && !reducedMotion) {
