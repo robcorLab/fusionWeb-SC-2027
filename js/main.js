@@ -255,6 +255,29 @@
     iconPaths.forEach(function (p) { p.classList.add('drawn'); });
   }
 
+  /* ================= PROCESO: RAIL DE PROGRESO ================= */
+  var processFill = qs('#processFill');
+  var processSteps = qsa('.process-step');
+  if (processFill && processSteps.length && 'IntersectionObserver' in window) {
+    var ioProcess = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var step = parseInt(entry.target.getAttribute('data-step'), 10) || 0;
+        var p = Math.round((step / processSteps.length) * 100);
+        if (step === processSteps.length ? p : p - 25 < 0 ? 0 : p - 25) {
+          processFill.style.setProperty('--p', Math.max(0, p - 25) + '%');
+        }
+        if (step === processSteps.length) {
+          processFill.style.setProperty('--p', '100%');
+        }
+        ioProcess.unobserve(entry.target);
+      });
+    }, { threshold: 0.35 });
+    processSteps.forEach(function (s) { ioProcess.observe(s); });
+  } else if (processFill) {
+    processFill.style.setProperty('--p', '100%');
+  }
+
   /* ================= SCROLL REVEAL ================= */
   var revealEls = qsa('.reveal');
   if ('IntersectionObserver' in window && !reducedMotion) {

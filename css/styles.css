@@ -730,6 +730,79 @@ html.no-js .reveal { opacity: 1; transform: none; }
   transform: rotate(45deg);
 }
 
+/* ============ BLOQUE F — PROCESO ============ */
+.process-wrap { position: relative; max-width: 1100px; margin: 0 auto; }
+
+.process-rail {
+  position: absolute;
+  top: 26px;
+  left: 6%;
+  right: 6%;
+  height: 3px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.process-rail-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--grad-marca);
+  background-size: var(--grad-marca-size);
+  animation: gradienteLento 10s ease infinite;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.8s var(--ease-out);
+}
+
+.process-rail-fill { transform: scaleX(var(--p, 0%)); }
+
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  counter-reset: step;
+}
+
+.process-step { text-align: center; padding: 0 8px; }
+
+.step-num {
+  position: relative;
+  z-index: 2;
+  display: inline-grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 18px;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: 0 0 0 6px var(--bg);
+  transition: border-color 0.35s ease, box-shadow 0.35s ease, color 0.35s ease;
+}
+
+.process-step.visible .step-num {
+  border-color: rgba(255, 68, 170, 0.6);
+  color: var(--magenta);
+  box-shadow: 0 0 0 6px var(--bg), 0 0 24px rgba(255, 68, 170, 0.35);
+}
+
+.step-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+.step-txt { color: var(--text-dim); font-size: 0.92rem; max-width: 220px; margin: 0 auto; }
+
 /* ============================================================
    RESPONSIVE
    ============================================================ */
