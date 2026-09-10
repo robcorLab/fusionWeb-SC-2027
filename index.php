@@ -103,18 +103,18 @@ $procesos = [
     ['04', 'Instalación',  'Entrega, montaje e instalación en sitio cuando lo requiere.'],
 ];
 
-// Categorías PROVISIONALES (se confirman/ajustan visualmente en Task 10)
+// Categorías confirmadas visualmente (visor local + OCR, Task 11)
 $proyectos = [
-    ['n' => 1,  'cat' => 'Gran Formato', 'alt' => 'Lona publicitaria de gran formato instalada — Sector Creativo'],
-    ['n' => 2,  'cat' => 'Rotulación',   'alt' => 'Rotulación vehicular con livery corporativa — Sector Creativo'],
-    ['n' => 3,  'cat' => 'Letreros',     'alt' => 'Letrero luminoso de fachada LED — Sector Creativo'],
-    ['n' => 4,  'cat' => 'Diseño Gráfico','alt' => 'Pieza de diseño editorial e identidad — Sector Creativo'],
-    ['n' => 5,  'cat' => 'Serigrafía',   'alt' => 'Serigrafía textil personalizada — Sector Creativo'],
-    ['n' => 6,  'cat' => 'Láser',        'alt' => 'Corte y grabado láser de precisión — Sector Creativo'],
-    ['n' => 7,  'cat' => 'CNC',          'alt' => 'Corte CNC en acrílico y MDF — Sector Creativo'],
-    ['n' => 8,  'cat' => 'Gran Formato', 'alt' => 'Valla publicitaria y pendones — Sector Creativo'],
-    ['n' => 9,  'cat' => 'Rotulación',   'alt' => 'Rotulación de vidrio y fachada — Sector Creativo'],
-    ['n' => 10, 'cat' => 'Letreros',     'alt' => 'Anuncio luminoso tipo neón LED — Sector Creativo'],
+    ['n' => 1,  'cat' => 'Letreros',     'alt' => 'Letrero exterior 3D de fachada — Unidad Médica San Gerardo — Sector Creativo'],
+    ['n' => 2,  'cat' => 'Rotulación',   'alt' => 'Rotulación de fachada con letrero 3D — Sector Creativo'],
+    ['n' => 3,  'cat' => 'Letreros',     'alt' => 'Letrero de identificación en acrílico — Cubículo — Sector Creativo'],
+    ['n' => 4,  'cat' => 'Letreros',     'alt' => 'Letrero 3D de urgencias 24/7 en acrílico — Sector Creativo'],
+    ['n' => 5,  'cat' => 'Letreros',     'alt' => 'Letrero de estación de agua purificada — Sector Creativo'],
+    ['n' => 6,  'cat' => 'Rotulación',   'alt' => 'Rotulación de semi-trailer — gráfica corporativa — Sector Creativo'],
+    ['n' => 7,  'cat' => 'Rotulación',   'alt' => 'Rotulación de flota de camiones — livery corporativa — Sector Creativo'],
+    ['n' => 8,  'cat' => 'Letreros',     'alt' => 'Letrero de fachada — Grupo Monalar — Sector Creativo'],
+    ['n' => 9,  'cat' => 'Rotulación',   'alt' => 'Rotulación de fachada y muro — Ferretería Fronteriza — Sector Creativo'],
+    ['n' => 10, 'cat' => 'Impresión Digital','alt' => 'Reconocimiento impreso — Medline 0 incidentes — Sector Creativo'],
 ];
 $cats = array_values(array_unique(array_column($proyectos, 'cat')));
 ?>
@@ -183,7 +183,7 @@ document.documentElement.classList.replace('no-js', 'js');
 
 <!-- ================= PRELOADER ================= -->
 <div id="preloader" aria-hidden="true">
-  <img src="logo_sc_3.svg" alt="" width="150" height="45">
+  <img src="logo_sc_3.svg" alt="Sector Creativo" width="150" height="45">
   <div class="preloader-bar"><span></span></div>
   <div class="preloader-count">0%</div>
 </div>
@@ -513,7 +513,7 @@ document.documentElement.classList.replace('no-js', 'js');
   <button class="lightbox-close" id="lbClose" aria-label="Cerrar">&times;</button>
   <button class="lightbox-nav prev" id="lbPrev" aria-label="Anterior">&#10094;</button>
   <figure class="lightbox-figure">
-    <img class="lightbox-img" src="" alt="" id="lbImg">
+    <img class="lightbox-img" src="" alt="Imagen ampliada del proyecto" id="lbImg">
     <figcaption class="lightbox-caption" id="lbCaption"></figcaption>
   </figure>
   <button class="lightbox-nav next" id="lbNext" aria-label="Siguiente">&#10095;</button>
