@@ -237,6 +237,24 @@
     window.addEventListener('scroll', onParallaxScroll, { passive: true });
   }
 
+  /* ================= ICONOS DIBUJADOS (stroke draw) ================= */
+  var iconPaths = qsa('.se-icon');
+  if (!reducedMotion && iconPaths.length && 'IntersectionObserver' in window) {
+    var ioIcons = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var p = entry.target;
+        var len = p.getTotalLength ? p.getTotalLength() : 300;
+        p.style.setProperty('--len', Math.ceil(len));
+        p.classList.add('drawn');
+        ioIcons.unobserve(p);
+      });
+    }, { threshold: 0.4 });
+    iconPaths.forEach(function (p) { ioIcons.observe(p); });
+  } else {
+    iconPaths.forEach(function (p) { p.classList.add('drawn'); });
+  }
+
   /* ================= SCROLL REVEAL ================= */
   var revealEls = qsa('.reveal');
   if ('IntersectionObserver' in window && !reducedMotion) {
