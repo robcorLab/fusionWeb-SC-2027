@@ -155,64 +155,79 @@
     spySections.forEach(function (s) { spy.observe(s); });
   }
 
-  /* ================= FORMULARIO (validación) ================= */
-  var contactForm = qs('#contactForm');
-  if (contactForm) {
-    var fields = {
-      nombre:   { el: qs('#f-nombre'),   err: qs('#err-nombre') },
-      email:    { el: qs('#f-email'),    err: qs('#err-email') },
-      telefono: { el: qs('#f-telefono'), err: qs('#err-telefono') },
-      mensaje:  { el: qs('#f-mensaje'),  err: qs('#err-mensaje') }
-    };
-    var messages = {
-      nombre:   'Escribe tu nombre (mínimo 2 caracteres).',
-      email:    'Escribe un correo válido (ej. nombre@dominio.com).',
-      telefono: 'Teléfono no válido (solo dígitos, espacios, +, -, paréntesis).',
-      mensaje:  'Escribe un mensaje de al menos 5 caracteres.'
+  /* ================= FORMULARIO REFORZADO ================= */
+  var form = qs('#contactForm');
+  var btnSubmit = qs('#btnSubmit');
+  var btnLabel = btnSubmit ? qs('.btn-label', btnSubmit) : null;
+
+  if (form) {
+    var inputs = {
+      nombre: qs('#f-nombre'),
+      email: qs('#f-email'),
+      telefono: qs('#f-telefono'),
+      mensaje: qs('#f-mensaje')
     };
 
-    function setError(name, show) {
-      var f = fields[name];
-      if (!f || !f.el) return;
-      var wrap = f.el.closest('.form-field');
-      if (show) {
-        wrap && wrap.classList.add('has-error');
-        if (f.err) {
-          f.err.textContent = messages[name];
-          f.err.hidden = false;
-        }
-      } else {
-        wrap && wrap.classList.remove('has-error');
-        if (f.err) {
-          f.err.textContent = '';
-          f.err.hidden = true;
-        }
+    var msgs = {
+      nombre: 'Escribe tu nombre (mínimo 2 caracteres).',
+      email: 'Escribe un correo válido (ej. nombre@dominio.com).',
+      telefono: 'Solo dígitos, espacios, +, - o paréntesis (7–20).',
+      mensaje: 'Cuéntanos algo más (mínimo 5 caracteres).'
+    };
+
+    function setError(field, hasError) {
+      var el = inputs[field];
+      var err = qs('#err-' + field);
+      if (!el) return;
+      var box = el.closest('.form-field');
+      if (box) box.classList.toggle('has-error', hasError);
+      if (err) {
+        err.hidden = !hasError;
+        err.textContent = hasError ? msgs[field] : '';
       }
     }
 
-    function validateField(name) {
-      var f = fields[name];
-      if (!f || !f.el) return true;
-      var val = f.el.value.trim();
+    function validate(field) {
+      var el = inputs[field];
+      if (!el) return true;
+      var val = el.value.trim();
       var ok = true;
-      if (name === 'nombre') ok = val.length >= 2;
-      if (name === 'email') ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val);
-      if (name === 'telefono') ok = val === '' || /^[\d\s\-\+\(\)]{7,20}$/.test(val);
-      if (name === 'mensaje') ok = val.length >= 5;
-      setError(name, !ok);
+      if (field === 'nombre') ok = val.length >= 2;
+      if (field === 'email') ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val);
+      if (field === 'telefono') ok = val === '' || /^[\d\s\-\+\(\)]{7,20}$/.test(val);
+      if (field === 'mensaje') ok = val.length >= 5;
+      setError(field, !ok);
       return ok;
     }
 
-    Object.keys(fields).forEach(function (name) {
-      var f = fields[name];
-      if (!f.el) return;
-      f.el.addEventListener('input', function () { validateField(name); });
-      f.el.addEventListener('blur', function () { validateField(name); });
+    Object.keys(inputs).forEach(function (key) {
+      var el = inputs[key];
+      if (!el) return;
+      el.addEventListener('input', function () { validate(key); });
+      el.addEventListener('blur', function () { validate(key); });
     });
 
-    contactForm.addEventListener('submit', function (e) {
-      var allOk = Object.keys(fields).every(validateField);
-      if (!allOk) e.preventDefault();
+    form.addEventListener('submit', function (e) {
+      var hp = form.querySelector('input[name="website"]');
+      if (hp && hp.value.trim() !== '') { e.preventDefault(); window.location.reload(); return; }
+
+      var fields = Object.keys(inputs);
+      var firstBad = null;
+      fields.forEach(function (k) {
+        if (!validate(k) && !firstBad) firstBad = inputs[k];
+      });
+      if (firstBad) {
+        e.preventDefault();
+        firstBad.focus();
+        return;
+      }
+      // estado de envío
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.classList.add('loading');
+        if (btnLabel) btnLabel.textContent = 'Enviando…';
+      }
+      // no preventDefault: el POST recarga la página y PHP responde
     });
   }
 
