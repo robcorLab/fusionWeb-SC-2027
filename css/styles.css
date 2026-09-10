@@ -478,6 +478,55 @@ html.no-js .reveal { opacity: 1; transform: none; }
   100% { transform: translateY(0); opacity: 0; }
 }
 
+/* ============ BLOQUE C — MARQUEE BAND ============ */
+.marquee-band {
+  position: relative;
+  z-index: 5;
+  overflow: hidden;
+  padding: 30px 0;
+  margin: -10px 0;
+  pointer-events: none;
+}
+
+.marquee {
+  position: relative;
+  border-block: 1px solid var(--border);
+  background:
+    linear-gradient(90deg, rgba(255, 68, 68, 0.06), rgba(0, 229, 255, 0.05), rgba(255, 68, 170, 0.06)),
+    var(--bg-soft);
+  overflow: hidden;
+  padding: 16px 0;
+  transform: rotate(-2deg) scale(1.04);
+  box-shadow: 0 0 40px rgba(255, 68, 68, 0.08);
+  pointer-events: auto;
+}
+
+.marquee-track {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  white-space: nowrap;
+  width: max-content;
+  animation: marqueeMove 26s linear infinite;
+}
+
+.marquee-track:hover { animation-play-state: paused; }
+
+.marquee-track span {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.marquee-track span:nth-child(even) { color: var(--magenta); }
+
+.marquee:hover .marquee-track span { color: var(--text); text-shadow: 0 0 14px rgba(255, 68, 170, 0.5); }
+
+@keyframes marqueeMove { to { transform: translateX(-50%); } }
+
 /* ============================================================
    RESPONSIVE
    ============================================================ */
