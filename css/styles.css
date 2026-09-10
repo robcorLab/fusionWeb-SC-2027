@@ -803,6 +803,46 @@ html.no-js .reveal { opacity: 1; transform: none; }
 
 .step-txt { color: var(--text-dim); font-size: 0.92rem; max-width: 220px; margin: 0 auto; }
 
+/* ============ BLOQUE G — ESTADÍSTICAS ============ */
+#estadisticas {
+  padding-block: clamp(40px, 6vw, 70px);
+  border-block: 1px solid var(--border);
+  background:
+    radial-gradient(ellipse 50% 80% at 50% 50%, rgba(255, 68, 170, 0.06), transparent 70%),
+    var(--bg-soft);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(24px, 5vw, 60px);
+  text-align: center;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.stat-num {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  line-height: 1.1;
+  background: var(--grad-marca);
+  background-size: var(--grad-marca-size);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradienteLento 10s ease infinite;
+  filter: drop-shadow(0 0 22px rgba(255, 68, 170, 0.35));
+}
+
+.stat-label {
+  margin-top: 8px;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
 /* ============================================================
    RESPONSIVE
    ============================================================ */

@@ -278,6 +278,37 @@
     processFill.style.setProperty('--p', '100%');
   }
 
+  /* ================= CONTADORES DE ESTADÍSTICAS ================= */
+  var statNums = qsa('.stat-num[data-count]');
+  if (statNums.length) {
+    if (!reducedMotion && 'IntersectionObserver' in window) {
+      var ioStats = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          var el = entry.target;
+          var target = parseInt(el.getAttribute('data-count'), 10) || 0;
+          var suffix = el.getAttribute('data-suffix') || '';
+          var t0 = null;
+          var DUR = 1600;
+          function step(now) {
+            if (!t0) t0 = now;
+            var p = Math.min((now - t0) / DUR, 1);
+            var eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.round(eased * target) + suffix;
+            if (p < 1) requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+          ioStats.unobserve(el);
+        });
+      }, { threshold: 0.5 });
+      statNums.forEach(function (s) { ioStats.observe(s); });
+    } else {
+      statNums.forEach(function (el) {
+        el.textContent = (el.getAttribute('data-count') || '0') + (el.getAttribute('data-suffix') || '');
+      });
+    }
+  }
+
   /* ================= SCROLL REVEAL ================= */
   var revealEls = qsa('.reveal');
   if ('IntersectionObserver' in window && !reducedMotion) {
