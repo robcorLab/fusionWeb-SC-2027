@@ -120,7 +120,7 @@ $proyectos = [
     ['n' => 7,  'cat' => 'Rotulación',   'alt' => 'Rotulación de flota de camiones — livery corporativa — Sector Creativo'],
     ['n' => 8,  'cat' => 'Letreros',     'alt' => 'Letrero de fachada — Grupo Monalar — Sector Creativo'],
     ['n' => 9,  'cat' => 'Rotulación',   'alt' => 'Rotulación de fachada y muro — Ferretería Fronteriza — Sector Creativo'],
-    ['n' => 10, 'cat' => 'Impresión Digital','alt' => 'Reconocimiento impreso — Medline 0 incidentes — Sector Creativo'],
+    ['n' => 10, 'cat' => 'Impresión Láser','alt' => 'Reconocimiento impreso — Medline 0 incidentes — Sector Creativo'],
 ];
 $cats = array_values(array_unique(array_column($proyectos, 'cat')));
 ?>
@@ -235,7 +235,7 @@ document.documentElement.classList.replace('no-js', 'js');
     <div class="marquee-track">
       <span>Diseño Gráfico</span><span>✦</span>
       <span>Impresión Gran Formato</span><span>✦</span>
-      <span>Impresión Digital</span><span>✦</span>
+      <span>Impresión Láser</span><span>✦</span>
       <span>Rotulación Vehicular</span><span>✦</span>
       <span>Corte CNC</span><span>✦</span>
       <span>Grabado Láser</span><span>✦</span>
@@ -244,7 +244,7 @@ document.documentElement.classList.replace('no-js', 'js');
       <span>Acabados Especiales</span><span>✦</span>
       <span>Diseño Gráfico</span><span>✦</span>
       <span>Impresión Gran Formato</span><span>✦</span>
-      <span>Impresión Digital</span><span>✦</span>
+      <span>Impresión Láser</span><span>✦</span>
       <span>Rotulación Vehicular</span><span>✦</span>
       <span>Corte CNC</span><span>✦</span>
       <span>Grabado Láser</span><span>✦</span>
