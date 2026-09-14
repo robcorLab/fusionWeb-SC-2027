@@ -283,7 +283,7 @@ document.documentElement.classList.replace('no-js', 'js');
   <div class="section-head reveal">
     <p class="section-kicker">Qué hacemos</p>
     <h2>Servicios</h2>
-    <p class="section-sub">Comunicación visual de alta calidad, desde la conceptualización hasta la producción final.</p>
+    <p class="section-sub">Comunicación visual, desde la conceptualización hasta la producción final.</p>
   </div>
 
   <div class="services-grid">
