@@ -311,9 +311,9 @@ document.documentElement.classList.replace('no-js', 'js');
             'Acrílico, madera, metal, vidrio', 'Trofeos y placas', 'Reconocimientos', 'Letreros grabados',
             'M4,20 L20,4 M10,14 L14,10 M7,12 L12,7 M13,17 L17,13'
         ],
-        'Serigrafía' => [
-            'Playeras y textiles', 'Objetos promocionales', 'Termos, gorras, bolsas',
-            'M9,3 L15,3 L17,5 L17,12 L15,14 L9,14 L7,12 L7,5 Z M7,14 L9,21 L15,21 L17,14 M12,3 L12,21'
+        'Impresión DTF' => [
+            'Impresión directa a film', 'Playeras y textiles', 'Alta durabilidad y color',
+            'M8,2 L16,2 L18,4 L20,4 L20,8 L18,8 L18,22 L6,22 L6,8 L4,8 L4,4 L6,4 Z M9,8 L15,8 L15,12 L9,12 Z M10,14 L14,14 M10,17 L14,17'
         ],
         'Letreros Luminosos' => [
             'Neón', 'Cajas de luz', 'Fachadas iluminadas', 'Anuncios luminosos',
