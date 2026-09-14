@@ -4,6 +4,7 @@
    scrollspy · reveal · (bloques añadidos por tarea: hero parallax,
    iconos draw, proceso, contadores, filtros, lightbox touch,
    formulario reforzado, back-to-top)
+   Design by RobCorLab
    ============================================================ */
 (function () {
   'use strict';

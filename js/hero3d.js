@@ -1,11 +1,14 @@
 /* ============================================================
    SECTOR CREATIVO — hero3d.js
    Campo de partículas 3D estilo constelación creativa.
-   - 3 capas: núcleo esférico + anillo orbital + fondo lejano
+   - 4 capas: núcleo esférico + anillo orbital + fondo lejano + primer plano cercano
+   - Capa cercana con paralaje amplificado y punto suave (bokeh) para
+     simular profundidad de campo y blur de movimiento
    - Líneas de constelación (pares cercanos, calculadas 1 sola vez)
    - Reacción al scroll (profundidad) y parallax con el mouse
    - Conteo de partículas adaptativo por viewport + DPR < 2 en móvil
    - Fallback elegante si WebGL o el CDN fallan
+   Design by RobCorLab
    ============================================================ */
 (function () {
   'use strict';
@@ -17,7 +20,7 @@
   if (!window.WebGLRenderingContext) return;
 
   var renderer, scene, camera, group;
-  var particles, particles2, bgPoints, lines;
+  var particles, particles2, bgPoints, fgPoints, lines;
   var mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var rafId = null;
@@ -31,10 +34,10 @@
   ];
 
   function countsFor(w) {
-    if (w < 480)  return { core: 500,  ring: 160, bg: 260,  lineNodes: 60 };
-    if (w < 768)  return { core: 750,  ring: 220, bg: 380,  lineNodes: 90 };
-    if (w < 1280) return { core: 1100, ring: 300, bg: 500,  lineNodes: 130 };
-    return           { core: 1400, ring: 350, bg: 600,  lineNodes: 170 };
+    if (w < 480)  return { core: 500,  ring: 160, bg: 260,  fg: 50,  lineNodes: 60 };
+    if (w < 768)  return { core: 750,  ring: 220, bg: 380,  fg: 80,  lineNodes: 90 };
+    if (w < 1280) return { core: 1100, ring: 300, bg: 500,  fg: 120, lineNodes: 130 };
+    return           { core: 1400, ring: 350, bg: 600,  fg: 160, lineNodes: 170 };
   }
 
   function buildCore(count) {
@@ -115,6 +118,47 @@
     return new THREE.LineSegments(geo, mat);
   }
 
+  // Textura radial suave: partícula con caída gradual que simula
+  // desenfoque/bokeh (clave para el efecto de profundidad de campo).
+  var softTex = (function () {
+    var c = document.createElement('canvas');
+    c.width = c.height = 64;
+    var ctx = c.getContext('2d');
+    var g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    g.addColorStop(0, 'rgba(255,255,255,1)');
+    g.addColorStop(0.35, 'rgba(255,255,255,0.6)');
+    g.addColorStop(0.7, 'rgba(255,255,255,0.18)');
+    g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 64, 64);
+    var t = new THREE.CanvasTexture(c);
+    t.needsUpdate = true;
+    return t;
+  })();
+
+  // Primer plano: partículas grandes, suaves y dispersas, colocadas
+  // cerca de la cámara. Su paralaje amplificado en el loop genera el
+  // efecto de movimiento blur / desenfoque de primer término.
+  function buildForeground(count) {
+    var geo = new THREE.BufferGeometry();
+    var positions = new Float32Array(count * 3);
+    var colors = new Float32Array(count * 3);
+    for (var i = 0; i < count; i++) {
+      positions[i * 3]     = (Math.random() - 0.5) * 30;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 17;
+      positions[i * 3 + 2] = 2 + Math.random() * 3.4;
+      var c = COLORS[Math.floor(Math.random() * COLORS.length)];
+      colors[i * 3] = c.r; colors[i * 3 + 1] = c.g; colors[i * 3 + 2] = c.b;
+    }
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    var mat = new THREE.PointsMaterial({
+      size: 0.22, vertexColors: true, transparent: true, opacity: 0.5,
+      map: softTex, blending: THREE.AdditiveBlending, depthWrite: false
+    });
+    return new THREE.Points(geo, mat);
+  }
+
   function init() {
     var w = canvas.parentElement.clientWidth || window.innerWidth;
     var counts = countsFor(w);
@@ -155,9 +199,9 @@
     var geo3 = new THREE.BufferGeometry();
     var positions3 = new Float32Array(counts.bg * 3);
     for (var k = 0; k < counts.bg; k++) {
-      positions3[k * 3]     = (Math.random() - 0.5) * 22;
-      positions3[k * 3 + 1] = (Math.random() - 0.5) * 12;
-      positions3[k * 3 + 2] = (Math.random() - 0.5) * 16 - 4;
+      positions3[k * 3]     = (Math.random() - 0.5) * 44;
+      positions3[k * 3 + 1] = (Math.random() - 0.5) * 26;
+      positions3[k * 3 + 2] = (Math.random() - 0.5) * 30 - 8;
     }
     geo3.setAttribute('position', new THREE.BufferAttribute(positions3, 3));
     var mat3 = new THREE.PointsMaterial({
@@ -166,6 +210,9 @@
     });
     bgPoints = new THREE.Points(geo3, mat3);
     scene.add(bgPoints);
+
+    fgPoints = buildForeground(counts.fg);
+    scene.add(fgPoints);
 
     onResize();
     window.addEventListener('resize', onResize);
@@ -204,13 +251,25 @@
     particles2.rotation.z += 0.0016;
     particles2.rotation.y += 0.0008;
 
+    // Primer plano: movimiento amplificado (2-3x el grupo) + deriva propia.
+    // El desenfoque lo aporta la textura suave; el paralaje extra simula
+    // profundidad de campo con blur de movimiento.
+    fgPoints.rotation.y += 0.0036;
+    fgPoints.rotation.x += 0.0012;
+    fgPoints.rotation.z -= 0.0009;
+
     // Reacción al scroll: el sistema se "hunde" lentamente al bajar
     var scrollFactor = Math.min(window.scrollY / window.innerHeight, 1);
     group.position.y = -scrollFactor * 1.6;
     group.rotation.z = -scrollFactor * 0.12;
+    fgPoints.position.y = -scrollFactor * 2.4;
 
     group.rotation.y += (mouseX * 0.28 - group.rotation.y) * 0.06;
     group.rotation.x += (mouseY * 0.18 - group.rotation.x) * 0.06;
+
+    // El primer plano sigue al grupo con factor amplificado → parallax fuerte
+    fgPoints.position.x += ((group.rotation.y * 2.2) - fgPoints.position.x) * 0.04;
+    fgPoints.position.z += ((group.rotation.x * 2.2) - fgPoints.position.z) * 0.04;
 
     camera.position.x += (mouseX * 0.55 - camera.position.x) * 0.05;
     camera.position.y += (-mouseY * 0.4 + 0.6 - camera.position.y) * 0.05;
