@@ -295,7 +295,7 @@ document.documentElement.classList.replace('no-js', 'js');
             'Lonas y vinilos', 'Pendones y roll-ups', 'Vallas publicitarias', 'Materiales rígidos',
             'M4,4 L9,4 L15,10 L20,10 L20,20 L4,20 Z M9,4 L9,10 L15,10 M4,12 L8,12 M4,16 L8,16'
         ],
-        'Impresión Digital' => [
+        'Impresión Láser' => [
             'Tarjetas de presentación', 'Volantes y flyers', 'Catálogos', 'Formatos hasta 33×48 cm',
             'M6,3 L14,3 L18,7 L18,21 L6,21 Z M14,3 L14,7 L18,7 M9,12 L15,12 M9,16 L15,16 M9,8 L11,8'
         ],
