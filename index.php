@@ -510,7 +510,7 @@ document.documentElement.classList.replace('no-js', 'js');
     </div>
     <div class="footer-services">
       <h4>Servicios</h4>
-      <span>Diseño Gráfico</span><span>Gran Formato</span><span>Rotulación</span><span>CNC y Láser</span><span>Impresión DTF</span><span>Letreros Luminosos</span>
+      <span>Diseño Gráfico</span><span>Impresión Gran Formato</span><span>Impresión Láser</span><span>Rotulación</span><span>Corte CNC</span><span>Corte y Grabado Láser</span><span>Impresión DTF</span><span>Letreros Luminosos</span><span>Acabados Especiales</span><span>Impresión 3D</span>
     </div>
   </div>
   <div class="footer-bottom">

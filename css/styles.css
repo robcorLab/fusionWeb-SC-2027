@@ -1179,6 +1179,13 @@ footer {
 .footer-brand p { color: var(--text-dim); font-size: 0.9rem; margin-top: 10px; }
 .footer-logo { margin-bottom: 4px; opacity: 0.9; }
 
+.footer-services {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, auto));
+  column-gap: 22px;
+  align-content: start;
+}
+
 .footer-nav h4,
 .footer-services h4 {
   font-family: var(--font-display);
@@ -1188,6 +1195,7 @@ footer {
   text-transform: uppercase;
   color: var(--text);
   margin-bottom: 16px;
+  grid-column: 1 / -1;
 }
 
 .footer-nav a,
