@@ -236,21 +236,23 @@ document.documentElement.classList.replace('no-js', 'js');
       <span>Diseño Gráfico</span><span>✦</span>
       <span>Impresión Gran Formato</span><span>✦</span>
       <span>Impresión Láser</span><span>✦</span>
-      <span>Rotulación Vehicular</span><span>✦</span>
+      <span>Rotulación</span><span>✦</span>
       <span>Corte CNC</span><span>✦</span>
-      <span>Grabado Láser</span><span>✦</span>
-      <span>Serigrafía</span><span>✦</span>
+      <span>Corte y Grabado Láser</span><span>✦</span>
+      <span>Impresión DTF</span><span>✦</span>
       <span>Letreros Luminosos</span><span>✦</span>
       <span>Acabados Especiales</span><span>✦</span>
+      <span>Impresión 3D</span><span>✦</span>
       <span>Diseño Gráfico</span><span>✦</span>
       <span>Impresión Gran Formato</span><span>✦</span>
       <span>Impresión Láser</span><span>✦</span>
-      <span>Rotulación Vehicular</span><span>✦</span>
+      <span>Rotulación</span><span>✦</span>
       <span>Corte CNC</span><span>✦</span>
-      <span>Grabado Láser</span><span>✦</span>
-      <span>Serigrafía</span><span>✦</span>
+      <span>Corte y Grabado Láser</span><span>✦</span>
+      <span>Impresión DTF</span><span>✦</span>
       <span>Letreros Luminosos</span><span>✦</span>
       <span>Acabados Especiales</span><span>✦</span>
+      <span>Impresión 3D</span><span>✦</span>
     </div>
   </div>
 </div>
