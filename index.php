@@ -541,6 +541,13 @@ document.documentElement.classList.replace('no-js', 'js');
 
 <!-- Three.js desde CDN con carga diferida -->
 <script defer src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" onerror="window.__THREE_FAILED__=true"></script>
+<!-- Composer del PostFX (bloom + fisheye/viñeta) — réplica del fondo 2027 -->
+<script defer src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
 <script defer src="js/hero3d.js"></script>
 <script defer src="js/main.js"></script>
 </body>

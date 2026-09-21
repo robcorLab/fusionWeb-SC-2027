@@ -244,10 +244,9 @@
         rafParallax = null;
         var rect = heroEl.getBoundingClientRect();
         if (rect.bottom < 0) return;
-        var sc = Math.min(window.scrollY, window.innerHeight * 1.4);
-        var p = sc / (window.innerHeight * 1.4);
-        heroContent.style.transform = 'translateY(' + (sc * 0.22) + 'px)';
-        heroContent.style.opacity = String(Math.max(1 - p * 1.05, 0));
+        var y = window.scrollY;
+        heroContent.style.transform = 'translateY(' + (y * 0.18) + 'px) scale(' + (1 + y * 0.00035) + ')';
+        heroContent.style.filter = 'blur(' + Math.min(8, y * 0.006) + 'px)';
       });
     }
     window.addEventListener('scroll', onParallaxScroll, { passive: true });
