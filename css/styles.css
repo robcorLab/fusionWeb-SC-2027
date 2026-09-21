@@ -1234,6 +1234,27 @@ footer .robcor {
   animation: gradienteLento 10s ease infinite;
 }
 
+footer .footer-credits {
+  text-decoration: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: color 0.2s var(--ease-out), text-shadow 0.2s var(--ease-out);
+}
+footer .footer-credits:hover,
+footer .footer-credits:focus-visible {
+  color: var(--text);
+  text-shadow: 0 0 14px rgba(0, 229, 255, 0.35);
+}
+footer .footer-credits:hover .robcor,
+footer .footer-credits:focus-visible .robcor {
+  filter: drop-shadow(0 0 8px rgba(255, 68, 68, 0.35));
+}
+footer .footer-credits:focus-visible {
+  outline: 2px solid var(--cian-neon);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
 /* ---------- BACK TO TOP ---------- */
 #backTop {
   position: fixed;

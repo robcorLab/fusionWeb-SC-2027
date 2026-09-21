@@ -515,7 +515,7 @@ document.documentElement.classList.replace('no-js', 'js');
   </div>
   <div class="footer-bottom">
     <p>&copy; 2027 Sector Creativo, S.A. de C.V. · Nuevo Laredo, Tamaulipas</p>
-    <p class="footer-credits">Design by <span class="robcor">RobCorLab</span></p>
+    <p><a class="footer-credits" href="https://robcorlab.com.mx" aria-label="RobCorLab, estudio de diseño — abre robcorlab.com.mx">Design by <span class="robcor">RobCorLab</span></a></p>
   </div>
 </footer>
 
