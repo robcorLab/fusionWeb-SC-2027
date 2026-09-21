@@ -1,4 +1,6 @@
 logs/
 .DS_Store
+._*
 error_log
 .well-known/
+ssl/
