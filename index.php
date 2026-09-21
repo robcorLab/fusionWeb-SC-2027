@@ -134,8 +134,8 @@ $cats = array_values(array_unique(array_column($proyectos, 'cat')));
 <meta property="og:type" content="website">
 <meta property="og:title" content="Sector Creativo | Comunicación Visual">
 <meta property="og:description" content="30 años de diseño, impresión, rotulación, CNC, láser, serigrafía y letreros luminosos en Nuevo Laredo, Tamaulipas.">
-<meta property="og:url" content="https://www.sectorcreativo.com.mx/">
-<meta property="og:image" content="https://www.sectorcreativo.com.mx/og-image.png">
+<meta property="og:url" content="https://robcorlab.com.mx/secreativo/">
+<meta property="og:image" content="https://robcorlab.com.mx/secreativo/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#050508">
 <link rel="icon" href="favicon.ico" type="image/x-icon">

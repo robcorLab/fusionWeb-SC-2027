@@ -4,3 +4,5 @@ logs/
 error_log
 .well-known/
 ssl/
+deploy/
+*.env
