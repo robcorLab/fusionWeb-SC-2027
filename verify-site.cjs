@@ -1,0 +1,80 @@
+const { chromium } = require('C:/Users/ROBCOR/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+(async () => {
+  const browser = await chromium.launch({channel:'msedge', headless:true});
+  fs.mkdirSync('qa', {recursive:true});
+  const results = [];
+  for (const width of [360,768,1440]) {
+    const page = await browser.newPage({viewport:{width,height:900}, reducedMotion:'reduce'});
+    const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    await page.goto('http://127.0.0.1:8092/', {waitUntil:'networkidle'});
+    assert.equal(await page.locator('h1').count(), 1);
+    assert.equal(await page.locator('link[rel="canonical"]').getAttribute('href'), 'https://sectorcreativo.com.mx/');
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, `overflow ${width}`);
+    assert.equal(await page.locator('#preloader').count(), 0);
+    if (width <= 768) {
+      await page.locator('#hamburger').click();
+      assert.equal(await page.locator('#hamburger').getAttribute('aria-expanded'), 'true');
+      await page.keyboard.press('Escape');
+    }
+    await page.screenshot({path:`qa/portada-${width}.png`});
+    await page.getByRole('button', {name:'Rotulación',exact:true}).click();
+    assert.equal(await page.locator('.chip[aria-pressed="true"]').textContent(), 'Rotulación');
+    const first = page.locator('.item:visible .project-open').first();
+    await first.focus();
+    await page.keyboard.press('Enter');
+    assert.equal(await page.locator('#lightbox').isVisible(), true);
+    assert.equal(await page.locator('#lbCounter').textContent(), '1 / 4');
+    await page.keyboard.press('ArrowRight');
+    assert.equal(await page.locator('#lbCounter').textContent(), '2 / 4');
+    await page.keyboard.press('Escape');
+    assert.equal(await first.evaluate(e=>e===document.activeElement),true);
+    await page.getByRole('button',{name:'Todos',exact:true}).click();
+    await page.locator('.service-quote').first().click();
+    assert.equal(await page.locator('#f-servicio').inputValue(),'Diseño Gráfico');
+    await page.locator('#btnSubmit').click();
+    assert.equal(await page.locator('[aria-invalid="true"]').count(),3);
+    await page.locator('#contacto').screenshot({path:`qa/contacto-${width}.png`});
+    assert.deepEqual(errors,[]);
+    results.push({width,overflow:false,keyboard:true,filters:true,validation:true,errors});
+    await page.close();
+  }
+  const page = await browser.newPage();
+  await page.goto('http://127.0.0.1:8092/');
+  await page.waitForTimeout(1200);
+  await page.screenshot({path:'qa/portada-animada.png'});
+  for (const href of await page.locator('.project-open').evaluateAll(items => items.map(e=>e.href))) {
+    assert.equal((await page.request.get(href)).status(),200);
+  }
+  await page.locator('#proyectos').screenshot({path:'qa/proyectos.png'});
+  await page.locator('#f-nombre').fill('Prueba local');
+  await page.locator('#f-email').fill('prueba@example.com');
+  await page.locator('#f-mensaje').fill('Verificación local del formulario, sin envío externo.');
+  await page.locator('#f-servicio').selectOption('Rotulación');
+  await page.locator('#f-fecha').fill('2026-12-01');
+  await Promise.all([page.waitForURL('**/#contacto'), page.locator('#btnSubmit').click()]);
+  assert.match(await page.locator('.form-alert').textContent(), /Modo desarrollo/);
+  const token = await page.locator('input[name=csrf]').inputValue();
+  const limited = await page.request.post('http://127.0.0.1:8092/',{form:{csrf:token,nombre:'Prueba',email:'prueba@example.com',mensaje:'Segunda prueba'}});
+  assert.match(await limited.text(),/Espera un minuto/);
+  const invalid = await page.request.post('http://127.0.0.1:8092/',{form:{csrf:'incorrecto',nombre:'Prueba'}});
+  assert.match(await invalid.text(),/Tu sesión expiró/);
+  await page.reload();
+  assert.equal(await page.locator('.form-alert.success').count(),0);
+  const nojs = await browser.newContext({javaScriptEnabled:false,viewport:{width:360,height:800}});
+  const plain = await nojs.newPage();
+  await plain.goto('http://127.0.0.1:8092/');
+  assert.equal(await plain.locator('nav').isVisible(),true);
+  assert.equal(await plain.locator('.project-open').first().isVisible(),true);
+  assert.equal(await plain.locator('.stat-num').first().textContent(),'30');
+  const offline = await browser.newPage();
+  await offline.route('https://**/*', route => route.abort());
+  await offline.goto('http://127.0.0.1:8092/');
+  await offline.locator('.service-quote').first().click();
+  assert.equal(await offline.locator('#f-servicio').inputValue(),'Diseño Gráfico');
+  await browser.close();
+  fs.writeFileSync('qa/results.json',JSON.stringify({viewports:results,localForm:true,csrf:true,sessionRateLimit:true,noDuplicateRefresh:true,noJS:true},null,2));
+  console.log('OK: vistas 360/768/1440, filtros, teclado, formulario local, CSRF, límite por sesión, recarga sin duplicados y sin JavaScript.');
+})().catch(e => { console.error(e);process.exit(1); });

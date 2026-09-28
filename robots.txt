@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /logs/
+Disallow: /deploy/
+Disallow: /docs/
+
+Sitemap: https://sectorcreativo.com.mx/sitemap.xml

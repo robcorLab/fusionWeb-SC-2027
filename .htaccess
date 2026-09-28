@@ -1,0 +1,8 @@
+Options -Indexes
+<FilesMatch "^(?:error_log|.*\.(?:log|crt|pem|key|env))$">
+  Require all denied
+</FilesMatch>
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^(?:logs|ssl|deploy|docs|\.git|\.superpowers)(?:/|$) - [F,L]
+</IfModule>

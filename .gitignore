@@ -6,3 +6,6 @@ error_log
 ssl/
 deploy/
 *.env
+qa/
+.claude/
+*.crt
