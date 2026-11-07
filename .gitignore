@@ -9,3 +9,10 @@ deploy/
 qa/
 .claude/
 *.crt
+# Contenido y cuentas del panel /admin (se generan en el servidor)
+data/*
+!data/.htaccess
+!data/index.html
+img/uploads/*
+!img/uploads/.htaccess
+!img/uploads/index.html

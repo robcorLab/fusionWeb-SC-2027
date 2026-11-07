@@ -1,0 +1,5 @@
+# Solo imagenes: nada ejecutable en la carpeta de subidas.
+Options -Indexes -ExecCGI
+<FilesMatch "(?i)\.(php[0-9]?|phtml|phar|pl|py|cgi|sh|html?|svg|js)$">
+  Require all denied
+</FilesMatch>

@@ -4,5 +4,5 @@ Options -Indexes
 </FilesMatch>
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteRule ^(?:logs|ssl|deploy|docs|\.git|\.superpowers)(?:/|$) - [F,L]
+  RewriteRule ^(?:logs|ssl|deploy|docs|data|inc|\.git|\.superpowers)(?:/|$) - [F,L]
 </IfModule>
