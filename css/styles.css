@@ -982,6 +982,7 @@ html.js .carrusel-track .item:not(.is-active) {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85);
   pointer-events: none;
 }
 

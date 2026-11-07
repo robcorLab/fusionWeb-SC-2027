@@ -144,7 +144,7 @@ $cats = array_values(array_unique(array_column($proyectos, 'cat')));
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css?v=20260927-carrusel">
+<link rel="stylesheet" href="css/styles.css?v=20261102-carrusel-text">
 <script>
 document.documentElement.classList.replace('no-js', 'js');
 </script>
